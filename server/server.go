@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/bobbytables/shipyard/store"
 	"github.com/gorilla/mux"
 )
 
@@ -12,12 +13,13 @@ type Config struct{}
 // Server handles incoming requests for shipyard
 type Server struct {
 	config Config
+	store  store.Store
 	m      *mux.Router
 }
 
 // NewServer initializes a server with the provided configuration
-func NewServer(c Config) *Server {
-	s := &Server{config: c}
+func NewServer(config Config, store store.Store) *Server {
+	s := &Server{config: config, store: store}
 	s.setupRouter()
 
 	return s
@@ -30,5 +32,6 @@ func (s *Server) Listen(addr string) error {
 
 func (s *Server) setupRouter() {
 	s.m = mux.NewRouter()
-	s.m.Handle("/recipes", NewEndpoint(getRecipes)).Methods("GET")
+	s.m.Handle("/definitions", NewEndpoint(s.getDefinitions)).Methods("GET")
+	s.m.Handle("/definitions", NewEndpoint(s.postDefinitions)).Methods("POST")
 }

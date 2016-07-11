@@ -1,0 +1,9 @@
+version: "2"
+
+services:
+  shipyard:
+    image: golang:1.6.1-alpine
+    volumes:
+      - .:/go/src/github.com/bobbytables/shipyard
+    command: ["go", "run", "cmd/shipyard/main.go", "start"]
+    working_dir: /go/src/github.com/bobbytables/shipyard
