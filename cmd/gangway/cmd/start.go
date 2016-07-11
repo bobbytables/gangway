@@ -4,15 +4,15 @@ package cmd
 
 import (
 	"github.com/Sirupsen/logrus"
-	"github.com/bobbytables/shipyard/server"
-	"github.com/bobbytables/shipyard/store/fake"
+	"github.com/bobbytables/gangway/server"
+	"github.com/bobbytables/gangway/store/fake"
 	"github.com/spf13/cobra"
 )
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "Start a shipyard server",
+	Short: "Start a gangway server",
 	Run: func(cmd *cobra.Command, args []string) {
 		startServer()
 	},

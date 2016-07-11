@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/bobbytables/shipyard/data"
+	"github.com/bobbytables/gangway/data"
 )
 
 // getDefinitionsResp contains the structure of the response
-// that shipyard will return when asked about all definitions
+// that gangway will return when asked about all definitions
 type getDefinitionsResp struct {
 	Definitions []data.Definition `json:"definitions"`
 }
 
 // postDefinitionsResp contains the structure of the response
-// that shipyard returns upon a successful add of a definition
+// that gangway returns upon a successful add of a definition
 type postDefinitionsResp struct {
 	Definition data.Definition `json:"definition"`
 }

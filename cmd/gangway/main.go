@@ -2,7 +2,7 @@
 
 package main
 
-import "github.com/bobbytables/shipyard/cmd/shipyard/cmd"
+import "github.com/bobbytables/gangway/cmd/gangway/cmd"
 
 func main() {
 	cmd.Execute()

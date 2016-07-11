@@ -14,9 +14,9 @@ var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "shipyard",
-	Short: "Runs and services the shipyard server",
-	Long: `Shipyard is a server that allows you to easily build and push Docker
+	Use:   "gangway",
+	Short: "Runs and services the gangway server",
+	Long: `gangway is a server that allows you to easily build and push Docker
 containers through an easy to use API.
 
 You may define recipes that can be executed through API calls and resulting
@@ -39,7 +39,7 @@ func init() {
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.shipyard.yaml)")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gangway.yaml)")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -51,7 +51,7 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	}
 
-	viper.SetConfigName(".shipyard") // name of config file (without extension)
+	viper.SetConfigName(".gangway") // name of config file (without extension)
 	viper.AddConfigPath("$HOME")     // adding home directory as first search path
 	viper.AutomaticEnv()             // read in environment variables that match
 

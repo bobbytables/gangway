@@ -1,11 +1,11 @@
 version: "2"
 
 services:
-  shipyard:
+  gangway:
     image: golang:1.6.1-alpine
     volumes:
-      - .:/go/src/github.com/bobbytables/shipyard
-    command: ["go", "run", "cmd/shipyard/main.go", "start", "--addr=0.0.0.0:8080"]
-    working_dir: /go/src/github.com/bobbytables/shipyard
+      - .:/go/src/github.com/bobbytables/gangway
+    command: ["go", "run", "cmd/gangway/main.go", "start", "--addr=0.0.0.0:8080"]
+    working_dir: /go/src/github.com/bobbytables/gangway
     ports:
       - 8080:8080

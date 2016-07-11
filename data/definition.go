@@ -1,6 +1,6 @@
 package data
 
-// Definition represents a shipyard definition.
+// Definition represents a gangway definition.
 // Definitions are used when building containers.
 type Definition struct {
 	Label       string

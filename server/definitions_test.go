@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/bobbytables/shipyard/data"
-	"github.com/bobbytables/shipyard/store/fake"
+	"github.com/bobbytables/gangway/data"
+	"github.com/bobbytables/gangway/store/fake"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -42,9 +42,9 @@ func TestGetDefinitions(t *testing.T) {
 func TestPostDefinitions(t *testing.T) {
 	newD := data.Definition{
 		Label:      "hcm-rails",
-		Source:     "git@github.com:bobbytables/shipyard.git",
+		Source:     "git@github.com:bobbytables/gangway.git",
 		Dockerfile: "Dockerfile-build",
-		Tag:        "shipyard/shipyard:latest",
+		Tag:        "gangway/gangway:latest",
 	}
 
 	r := new(bytes.Buffer)

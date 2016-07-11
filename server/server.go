@@ -3,14 +3,14 @@ package server
 import (
 	"net/http"
 
-	"github.com/bobbytables/shipyard/store"
+	"github.com/bobbytables/gangway/store"
 	"github.com/gorilla/mux"
 )
 
 // Config stores configuration for a server instance
 type Config struct{}
 
-// Server handles incoming requests for shipyard
+// Server handles incoming requests for gangway
 type Server struct {
 	config Config
 	store  store.Store

@@ -1,8 +1,8 @@
 package fake
 
 import (
-	"github.com/bobbytables/shipyard/data"
-	"github.com/bobbytables/shipyard/store"
+	"github.com/bobbytables/gangway/data"
+	"github.com/bobbytables/gangway/store"
 )
 
 // Store implements store.Store
