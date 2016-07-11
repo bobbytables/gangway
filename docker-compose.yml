@@ -5,5 +5,7 @@ services:
     image: golang:1.6.1-alpine
     volumes:
       - .:/go/src/github.com/bobbytables/shipyard
-    command: ["go", "run", "cmd/shipyard/main.go", "start"]
+    command: ["go", "run", "cmd/shipyard/main.go", "start", "--addr=0.0.0.0:8080"]
     working_dir: /go/src/github.com/bobbytables/shipyard
+    ports:
+      - 8080:8080

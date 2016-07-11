@@ -5,6 +5,7 @@ package cmd
 import (
 	"github.com/Sirupsen/logrus"
 	"github.com/bobbytables/shipyard/server"
+	"github.com/bobbytables/shipyard/store/fake"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +22,7 @@ var startCmd = &cobra.Command{
 var listenAddr string
 
 func startServer() {
-	s := server.NewServer(server.Config{})
+	s := server.NewServer(server.Config{}, &fake.Store{})
 
 	logrus.Infof("starting server on %s", listenAddr)
 	s.Listen(listenAddr)
