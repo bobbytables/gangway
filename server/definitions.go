@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/bobbytables/gangway/data"
 )
 
@@ -22,6 +23,7 @@ type postDefinitionsResp struct {
 func (s *Server) getDefinitions(w http.ResponseWriter, r *http.Request) {
 	defs, err := s.store.RetrieveDefinitions()
 	if err != nil {
+		logrus.WithError(err).Error()
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -29,6 +31,7 @@ func (s *Server) getDefinitions(w http.ResponseWriter, r *http.Request) {
 	resp := getDefinitionsResp{Definitions: defs}
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		logrus.WithError(err).Error()
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

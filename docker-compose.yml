@@ -5,7 +5,15 @@ services:
     image: golang:1.6.1-alpine
     volumes:
       - .:/go/src/github.com/bobbytables/gangway
-    command: ["go", "run", "cmd/gangway/main.go", "start", "--addr=0.0.0.0:8080"]
+    command: ["go", "run", "cmd/gangway/main.go", "start", "--addr=0.0.0.0:8080", "--etcd-addr=http://etcd:4001"]
     working_dir: /go/src/github.com/bobbytables/gangway
     ports:
       - 8080:8080
+    links:
+      - etcd
+
+  etcd:
+    image: gcr.io/google_containers/etcd:2.2.1
+    command: ['/usr/local/bin/etcd', '--addr=0.0.0.0:4001', '--bind-addr=0.0.0.0:4001', '--data-dir=/var/etcd/data']
+    ports:
+      - 4001:4001

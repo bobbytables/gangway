@@ -5,7 +5,7 @@ package cmd
 import (
 	"github.com/Sirupsen/logrus"
 	"github.com/bobbytables/gangway/server"
-	"github.com/bobbytables/gangway/store/fake"
+	"github.com/bobbytables/gangway/store/etcd"
 	"github.com/spf13/cobra"
 )
 
@@ -18,11 +18,17 @@ var startCmd = &cobra.Command{
 	},
 }
 
-// listenAddr is the addres the server will be started on
-var listenAddr string
+var (
+	// listenAddr is the addres the server will be started on
+	listenAddr string
+
+	// etcdAddr is the etcd endpoint to use for storage
+	etcdAddr string
+)
 
 func startServer() {
-	s := server.NewServer(server.Config{}, &fake.Store{})
+	estore, _ := etcdstore.NewStore([]string{etcdAddr})
+	s := server.NewServer(server.Config{}, estore)
 
 	logrus.Infof("starting server on %s", listenAddr)
 	s.Listen(listenAddr)
@@ -31,4 +37,5 @@ func startServer() {
 func init() {
 	RootCmd.AddCommand(startCmd)
 	startCmd.Flags().StringVar(&listenAddr, "addr", ":8080", "the address to start the server on")
+	startCmd.Flags().StringVar(&etcdAddr, "etcd-addr", "0.0.0.0:4001", "the address to start the server on")
 }
