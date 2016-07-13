@@ -29,11 +29,8 @@ func (s *Store) RetrieveDefinitions() ([]data.Definition, error) {
 
 	var ds []data.Definition
 	for _, node := range resp.Node.Nodes {
-		label := strings.TrimPrefix(node.Key, GangwayDefinitionsKey+"/")
-		jsonV := node.Value
-		d := data.Definition{Label: label}
-
-		if err := json.NewDecoder(strings.NewReader(jsonV)).Decode(&d); err != nil {
+		d, err := definitionFromNode(node)
+		if err != nil {
 			return nil, err
 		}
 
@@ -56,4 +53,16 @@ func (s *Store) AddDefinition(d data.Definition) error {
 	_, err = kapp.Set(context.TODO(), key, string(js), nil)
 
 	return err
+}
+
+func definitionFromNode(n *client.Node) (data.Definition, error) {
+	label := strings.TrimPrefix(n.Key, GangwayDefinitionsKey+"/")
+	jsonV := n.Value
+	d := data.Definition{Label: label}
+
+	if err := json.NewDecoder(strings.NewReader(jsonV)).Decode(&d); err != nil {
+		return data.Definition{}, err
+	}
+
+	return d, nil
 }
