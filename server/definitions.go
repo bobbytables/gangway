@@ -23,7 +23,7 @@ type postDefinitionsResp struct {
 func (s *Server) getDefinitions(w http.ResponseWriter, r *http.Request) {
 	defs, err := s.store.RetrieveDefinitions()
 	if err != nil {
-		logrus.WithError(err).Error()
+		logrus.WithError(err).Error("could not retrieve definitions")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -31,7 +31,7 @@ func (s *Server) getDefinitions(w http.ResponseWriter, r *http.Request) {
 	resp := getDefinitionsResp{Definitions: defs}
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		logrus.WithError(err).Error()
+		logrus.WithError(err).Error("could not encode definitions")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
