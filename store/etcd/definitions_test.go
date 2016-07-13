@@ -41,7 +41,7 @@ func (f *FakeKeysAPI) Watcher(key string, opts *client.WatcherOptions) client.Wa
 	return nil
 }
 
-func TestRetrieveDefinitions(t *testing.T) {
+func makeStore() (*Store, *FakeKeysAPI) {
 	keysAPI := &FakeKeysAPI{}
 	keysFactory := func(c client.Client) client.KeysAPI {
 		return keysAPI
@@ -51,14 +51,23 @@ func TestRetrieveDefinitions(t *testing.T) {
 		newKeysAPIFactory: keysFactory,
 	}
 
+	return s, keysAPI
+}
+
+func TestRetrieveDefinitions(t *testing.T) {
+	s, keysAPI := makeStore()
+
 	resp := &client.Response{
 		Node: &client.Node{
 			Nodes: []*client.Node{{Key: "chicken-cat", Value: `{"source": "hello-world", "dockerfile": "mydockerfile", "tag":"sometag"}`}},
 		},
 	}
 
-	keysAPI.On("Get", context.TODO(), GangwayDefinitionsKey, &client.GetOptions{Recursive: true}).
-		Return(resp, nil)
+	keysAPI.On("Get",
+		context.TODO(),
+		GangwayDefinitionsKey,
+		&client.GetOptions{Recursive: true},
+	).Return(resp, nil)
 
 	ds, err := s.RetrieveDefinitions()
 
