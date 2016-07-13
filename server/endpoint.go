@@ -6,6 +6,10 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+type errorResponse struct {
+	Error string `json:"error"`
+}
+
 // Endpoint contains the handler for a particular route
 type Endpoint struct {
 	handler http.HandlerFunc

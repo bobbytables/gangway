@@ -47,6 +47,11 @@ func (s *Server) postDefinitions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if vErr := data.IsValidDefinition(d); vErr != nil {
+		s.writeError(w, vErr, 422)
+		return
+	}
+
 	if err := s.store.AddDefinition(d); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

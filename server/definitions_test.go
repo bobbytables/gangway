@@ -69,3 +69,28 @@ func TestPostDefinitions(t *testing.T) {
 	assert.Equal(t, rec.Code, 201, "status code is for a create")
 	assert.Equal(t, newD, decodedResp.Definition, "response body matches JSON")
 }
+
+func TestPostWithBadDefinition(t *testing.T) {
+	newD := data.Definition{}
+
+	r := new(bytes.Buffer)
+	require.Nil(t, json.NewEncoder(r).Encode(newD))
+
+	st := &fake.Store{}
+	s := NewServer(Config{}, st)
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("POST", "/definitions", r)
+	require.Nil(t, err)
+
+	st.FakeAddDefinition = func(d data.Definition) error {
+		return nil
+	}
+
+	s.postDefinitions(rec, req)
+
+	var decodedResp errorResponse
+
+	require.Nil(t, json.NewDecoder(rec.Body).Decode(&decodedResp))
+	assert.Equal(t, rec.Code, 422, "status code is for a entity issue")
+	assert.Equal(t, "label cannot be empty", decodedResp.Error, "response body matches JSON")
+}
