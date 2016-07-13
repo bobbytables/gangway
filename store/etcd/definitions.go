@@ -45,22 +45,15 @@ func (s *Store) RetrieveDefinitions() ([]data.Definition, error) {
 
 // AddDefinition implements store.Store
 func (s *Store) AddDefinition(d data.Definition) error {
-	return nil
-}
+	kapp := s.newKeysAPIFactory(s.etcdClient)
 
-func getMapFromNode(n *client.Node) map[string]string {
-	if !n.Dir {
-		return nil
+	js, err := json.Marshal(d)
+	if err != nil {
+		return err
 	}
 
-	m := make(map[string]string)
-	for _, n := range n.Nodes {
-		if n.Dir {
-			continue
-		}
+	key := fmt.Sprintf("%s/%s", GangwayDefinitionsKey, d.Label)
+	_, err = kapp.Set(context.TODO(), key, string(js), nil)
 
-		m[n.Key] = n.Value
-	}
-
-	return m
+	return err
 }

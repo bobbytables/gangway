@@ -1,6 +1,7 @@
 package etcdstore
 
 import (
+	"encoding/json"
 	"testing"
 
 	"golang.org/x/net/context"
@@ -22,7 +23,8 @@ func (f *FakeKeysAPI) Get(ctx context.Context, key string, opts *client.GetOptio
 }
 
 func (f *FakeKeysAPI) Set(ctx context.Context, key, value string, opts *client.SetOptions) (*client.Response, error) {
-	return nil, nil
+	o := f.Called(ctx, key, value, opts)
+	return o.Get(0).(*client.Response), o.Error(1)
 }
 func (f *FakeKeysAPI) Delete(ctx context.Context, key string, opts *client.DeleteOptions) (*client.Response, error) {
 	return nil, nil
@@ -75,4 +77,22 @@ func TestRetrieveDefinitions(t *testing.T) {
 	assert.Len(t, ds, 1)
 	d := data.Definition{Label: "chicken-cat", Source: "hello-world", Dockerfile: "mydockerfile", Environment: nil, Tag: "sometag"}
 	assert.Equal(t, d, ds[0], "definition matches etcd return value")
+}
+
+func TestAddDefinitions(t *testing.T) {
+	s, keysAPI := makeStore()
+	d := data.Definition{Label: "elder-cunningham", Source: "githuborsomething"}
+	js, err := json.Marshal(d)
+	require.Nil(t, err)
+
+	keysAPI.On("Set",
+		context.TODO(),
+		GangwayDefinitionsKey+"/"+d.Label,
+		string(js),
+		(*client.SetOptions)(nil),
+	).Return(&client.Response{}, nil)
+
+	s.AddDefinition(d)
+
+	keysAPI.AssertExpectations(t)
 }

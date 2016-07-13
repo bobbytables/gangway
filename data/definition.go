@@ -3,7 +3,7 @@ package data
 // Definition represents a gangway definition.
 // Definitions are used when building containers.
 type Definition struct {
-	Label       string
+	Label       string            `json:"label"`
 	Source      string            `json:"source"`
 	Dockerfile  string            `json:"dockerfile"`
 	Environment map[string]string `json:"environment"`
