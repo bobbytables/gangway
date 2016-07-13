@@ -12,7 +12,8 @@ var _ client.Client
 
 // Store implements store.Store for interacting with etcd
 type Store struct {
-	etcdClient client.Client
+	etcdClient        client.Client
+	newKeysAPIFactory func(client.Client) client.KeysAPI
 }
 
 var _ store.Store = &Store{}
@@ -31,6 +32,7 @@ func NewStore(endpoints []string) (*Store, error) {
 	}
 
 	return &Store{
-		etcdClient: c,
+		etcdClient:        c,
+		newKeysAPIFactory: client.NewKeysAPI,
 	}, nil
 }

@@ -4,8 +4,8 @@ package data
 // Definitions are used when building containers.
 type Definition struct {
 	Label       string
-	Source      string
-	Dockerfile  string
-	Environment map[string]string
-	Tag         string
+	Source      string            `json:"source"`
+	Dockerfile  string            `json:"dockerfile"`
+	Environment map[string]string `json:"environment"`
+	Tag         string            `json:"tag"`
 }
