@@ -20,11 +20,13 @@ func NewBuilder(c *docker.Client) *Builder {
 
 // Build builds a Docker image from a definition
 func (b *Builder) Build(bo builder.BuildOpts) *builder.Result {
-	opts := client.BuildImageOptions{
+	opts := docker.BuildImageOptions{
 		OutputStream: bo.OutputStream,
 		ContextDir:   bo.ContextDir,
 		Name:         bo.Tag,
 	}
 
-	return nil
+	err := b.client.BuildImage(opts)
+
+	return &builder.Result{Err: err}
 }

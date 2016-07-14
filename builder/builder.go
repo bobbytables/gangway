@@ -9,10 +9,5 @@ type Builder interface {
 
 // Result contains the result of a build
 type Result struct {
-	err error
-}
-
-// Err returns an error on a response (if any)
-func (r Result) Err() error {
-	return r.err
+	Err error
 }
