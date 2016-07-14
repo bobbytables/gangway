@@ -16,7 +16,7 @@ import (
 
 func TestGetDefinitions(t *testing.T) {
 	st := &fake.Store{}
-	s := NewServer(Config{}, st)
+	s := NewServer(Config{}, st, nil)
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/definitions", nil)
 	require.Nil(t, err)
@@ -51,7 +51,7 @@ func TestPostDefinitions(t *testing.T) {
 	require.Nil(t, json.NewEncoder(r).Encode(newD))
 
 	st := &fake.Store{}
-	s := NewServer(Config{}, st)
+	s := NewServer(Config{}, st, nil)
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/definitions", r)
 	require.Nil(t, err)
@@ -77,7 +77,7 @@ func TestPostWithBadDefinition(t *testing.T) {
 	require.Nil(t, json.NewEncoder(r).Encode(newD))
 
 	st := &fake.Store{}
-	s := NewServer(Config{}, st)
+	s := NewServer(Config{}, st, nil)
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/definitions", r)
 	require.Nil(t, err)

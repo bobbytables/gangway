@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/bobbytables/gangway/builder"
 	"github.com/bobbytables/gangway/store"
+
 	"github.com/gorilla/mux"
 )
 
@@ -14,13 +16,20 @@ type Config struct{}
 // Server handles incoming requests for gangway
 type Server struct {
 	config Config
-	store  store.Store
 	m      *mux.Router
+
+	store   store.Store
+	builder builder.Builder
 }
 
 // NewServer initializes a server with the provided configuration
-func NewServer(config Config, store store.Store) *Server {
-	s := &Server{config: config, store: store}
+func NewServer(config Config, store store.Store, builder builder.Builder) *Server {
+	s := &Server{
+		config:  config,
+		store:   store,
+		builder: builder,
+	}
+
 	s.setupRouter()
 
 	return s
@@ -35,6 +44,7 @@ func (s *Server) setupRouter() {
 	s.m = mux.NewRouter()
 	s.m.Handle("/definitions", NewEndpoint(s.getDefinitions)).Methods("GET")
 	s.m.Handle("/definitions", NewEndpoint(s.postDefinitions)).Methods("POST")
+	s.m.Handle("/definitions/{label}", NewEndpoint(s.buildDefinition)).Methods("POST")
 }
 
 func (s *Server) writeError(w http.ResponseWriter, err error, code int) {

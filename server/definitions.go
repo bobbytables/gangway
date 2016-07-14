@@ -2,10 +2,14 @@ package server
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/bobbytables/gangway/builder"
 	"github.com/bobbytables/gangway/data"
+	"github.com/bobbytables/gangway/source"
+	"github.com/gorilla/mux"
 )
 
 // getDefinitionsResp contains the structure of the response
@@ -63,5 +67,38 @@ func (s *Server) postDefinitions(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
 
+func (s *Server) buildDefinition(w http.ResponseWriter, r *http.Request) {
+	ds, err := s.store.RetrieveDefinitions()
+	if err != nil {
+		s.writeError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	var d data.Definition
+	for _, dd := range ds {
+		if dd.Label == mux.Vars(r)["label"] {
+			d = dd
+			break
+		}
+	}
+
+	src := source.NewSource(d.Source)
+	if err := src.Pull(); err != nil {
+		s.writeError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	bo := builder.BuildOpts{
+		ContextDir:   src.Directory(),
+		OutputStream: ioutil.Discard,
+		Dockerfile:   d.Dockerfile,
+		Tag:          d.Tag,
+	}
+	res := s.builder.Build(bo)
+	if res.Err != nil {
+		s.writeError(w, err, http.StatusInternalServerError)
+		return
+	}
 }
