@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os/exec"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/pkg/errors"
 )
 
@@ -20,13 +21,19 @@ func NewSource(repo string) *Source {
 
 // Pull pulls the source from git
 func (s *Source) Pull() error {
-	d, err := ioutil.TempDir("gangway", "pull")
+	d, err := ioutil.TempDir("", "pull")
 	if err != nil {
 		return errors.Wrap(err, "could not create temporary directory for source pull")
 	}
 
+	logrus.WithFields(logrus.Fields{"source": s.repo}).Info("pulling repo")
+
 	s.targetDir = d
-	if _, err := exec.Command("git", "pull", s.repo, s.targetDir).CombinedOutput(); err != nil {
+	cmd := exec.Command("git", "clone", s.repo, s.targetDir)
+	cmd.Dir = s.targetDir
+
+	if out, err := cmd.CombinedOutput(); err != nil {
+		logrus.Info(string(out))
 		return errors.Wrap(err, "could not pull source repo")
 	}
 

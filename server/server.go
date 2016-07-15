@@ -23,14 +23,11 @@ type Server struct {
 }
 
 // NewServer initializes a server with the provided configuration
-func NewServer(config Config, store store.Store, builder builder.Builder) *Server {
-	s := &Server{
-		config:  config,
-		store:   store,
-		builder: builder,
-	}
-
+func NewServer(opts ...interface{}) *Server {
+	// config Config, store store.Store, builder builder.Builder
+	s := &Server{}
 	s.setupRouter()
+	s.setupOptions(opts...)
 
 	return s
 }
@@ -45,6 +42,19 @@ func (s *Server) setupRouter() {
 	s.m.Handle("/definitions", NewEndpoint(s.getDefinitions)).Methods("GET")
 	s.m.Handle("/definitions", NewEndpoint(s.postDefinitions)).Methods("POST")
 	s.m.Handle("/definitions/{label}", NewEndpoint(s.buildDefinition)).Methods("POST")
+}
+
+func (s *Server) setupOptions(opts ...interface{}) {
+	for _, v := range opts {
+		switch v.(type) {
+		case Config:
+			s.config = v.(Config)
+		case store.Store:
+			s.store = v.(store.Store)
+		case builder.Builder:
+			s.builder = v.(builder.Builder)
+		}
+	}
 }
 
 func (s *Server) writeError(w http.ResponseWriter, err error, code int) {

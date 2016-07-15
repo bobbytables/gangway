@@ -3,6 +3,7 @@
 package cmd
 
 import (
+	dcb "github.com/bobbytables/gangway/builder/docker"
 	"github.com/bobbytables/gangway/server"
 	"github.com/bobbytables/gangway/store/etcd"
 
@@ -39,7 +40,7 @@ func startServer() {
 		logrus.WithError(err).Fatal("could not create docker client")
 	}
 
-	s := server.NewServer(server.Config{}, estore, dc)
+	s := server.NewServer(server.Config{}, estore, dcb.NewBuilder(dc))
 
 	logrus.Infof("starting server on %s", listenAddr)
 	s.Listen(listenAddr)
@@ -49,5 +50,5 @@ func init() {
 	RootCmd.AddCommand(startCmd)
 	startCmd.Flags().StringVar(&listenAddr, "addr", ":8080", "the address to start the server on")
 	startCmd.Flags().StringVar(&etcdAddr, "etcd-addr", "0.0.0.0:4001", "the address to start the server on")
-	startCmd.Flags().StringVar(&dockerEndpoint, "docker-endpoint", "/var/run/docker.sock", "docker endpoint to communicate on")
+	startCmd.Flags().StringVar(&dockerEndpoint, "docker-endpoint", "unix:///var/run/docker.sock", "docker endpoint to communicate on")
 }

@@ -2,15 +2,19 @@ version: "2"
 
 services:
   gangway:
-    image: golang:1.6.1-alpine
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
     volumes:
       - .:/go/src/github.com/bobbytables/gangway
+      - /var/run/docker.sock:/var/run/docker.sock
     command: ["go", "run", "cmd/gangway/main.go", "start", "--addr=0.0.0.0:8080", "--etcd-addr=http://etcd:4001"]
     working_dir: /go/src/github.com/bobbytables/gangway
     ports:
       - 8080:8080
     links:
       - etcd
+
 
   etcd:
     image: gcr.io/google_containers/etcd:2.2.1

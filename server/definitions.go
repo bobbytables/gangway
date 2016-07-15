@@ -2,13 +2,12 @@ package server
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/bobbytables/gangway/builder"
 	"github.com/bobbytables/gangway/data"
-	"github.com/bobbytables/gangway/source"
 	"github.com/gorilla/mux"
 )
 
@@ -84,21 +83,16 @@ func (s *Server) buildDefinition(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	src := source.NewSource(d.Source)
-	if err := src.Pull(); err != nil {
-		s.writeError(w, err, http.StatusInternalServerError)
-		return
-	}
-
 	bo := builder.BuildOpts{
-		ContextDir:   src.Directory(),
-		OutputStream: ioutil.Discard,
+		OutputStream: os.Stdout,
 		Dockerfile:   d.Dockerfile,
 		Tag:          d.Tag,
+		Source:       d.Source,
 	}
+
 	res := s.builder.Build(bo)
 	if res.Err != nil {
-		s.writeError(w, err, http.StatusInternalServerError)
+		s.writeError(w, res.Err, http.StatusInternalServerError)
 		return
 	}
 }

@@ -7,4 +7,5 @@ import "github.com/bobbytables/gangway/data"
 type Store interface {
 	RetrieveDefinitions() ([]data.Definition, error)
 	AddDefinition(d data.Definition) error
+	RetrieveDefinition(label string) (data.Definition, error)
 }

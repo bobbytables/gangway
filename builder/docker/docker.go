@@ -2,6 +2,8 @@ package docker
 
 import (
 	"github.com/bobbytables/gangway/builder"
+	"github.com/bobbytables/gangway/source"
+	"github.com/pkg/errors"
 
 	"github.com/fsouza/go-dockerclient"
 )
@@ -22,11 +24,21 @@ func NewBuilder(c *docker.Client) *Builder {
 func (b *Builder) Build(bo builder.BuildOpts) *builder.Result {
 	opts := docker.BuildImageOptions{
 		OutputStream: bo.OutputStream,
-		ContextDir:   bo.ContextDir,
 		Name:         bo.Tag,
+		Dockerfile:   bo.Dockerfile,
 	}
 
+	src := source.NewSource(bo.Source)
+	if err := src.Pull(); err != nil {
+		return &builder.Result{Err: err}
+	}
+
+	opts.ContextDir = src.Directory()
+
 	err := b.client.BuildImage(opts)
+	if err != nil {
+		err = errors.Wrap(err, "could not build image")
+	}
 
 	return &builder.Result{Err: err}
 }

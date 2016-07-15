@@ -16,7 +16,7 @@ import (
 
 func TestGetDefinitions(t *testing.T) {
 	st := &fake.Store{}
-	s := NewServer(Config{}, st, nil)
+	s := NewServer(Config{}, st)
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/definitions", nil)
 	require.Nil(t, err)
@@ -25,9 +25,7 @@ func TestGetDefinitions(t *testing.T) {
 		data.Definition{Source: "githubIGuess"},
 	}
 
-	st.FakeRetrieveDefinitions = func() ([]data.Definition, error) {
-		return defs, nil
-	}
+	st.On("RetrieveDefinitions").Return(defs, nil)
 
 	s.getDefinitions(rec, req)
 
@@ -51,15 +49,12 @@ func TestPostDefinitions(t *testing.T) {
 	require.Nil(t, json.NewEncoder(r).Encode(newD))
 
 	st := &fake.Store{}
-	s := NewServer(Config{}, st, nil)
+	s := NewServer(Config{}, st)
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/definitions", r)
 	require.Nil(t, err)
 
-	st.FakeAddDefinition = func(d data.Definition) error {
-		assert.Equal(t, newD, d, "definition matching")
-		return nil
-	}
+	st.On("AddDefinition", newD).Return(nil)
 
 	s.postDefinitions(rec, req)
 
@@ -68,6 +63,7 @@ func TestPostDefinitions(t *testing.T) {
 	require.Nil(t, json.NewDecoder(rec.Body).Decode(&decodedResp))
 	assert.Equal(t, rec.Code, 201, "status code is for a create")
 	assert.Equal(t, newD, decodedResp.Definition, "response body matches JSON")
+	st.AssertCalled(t, "AddDefinition", newD)
 }
 
 func TestPostWithBadDefinition(t *testing.T) {
@@ -77,14 +73,10 @@ func TestPostWithBadDefinition(t *testing.T) {
 	require.Nil(t, json.NewEncoder(r).Encode(newD))
 
 	st := &fake.Store{}
-	s := NewServer(Config{}, st, nil)
+	s := NewServer(Config{}, st)
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/definitions", r)
 	require.Nil(t, err)
-
-	st.FakeAddDefinition = func(d data.Definition) error {
-		return nil
-	}
 
 	s.postDefinitions(rec, req)
 
@@ -93,4 +85,7 @@ func TestPostWithBadDefinition(t *testing.T) {
 	require.Nil(t, json.NewDecoder(rec.Body).Decode(&decodedResp))
 	assert.Equal(t, rec.Code, 422, "status code is for a entity issue")
 	assert.Equal(t, "label cannot be empty", decodedResp.Error, "response body matches JSON")
+}
+
+func TestPostDefinitionToCreateImage(t *testing.T) {
 }
