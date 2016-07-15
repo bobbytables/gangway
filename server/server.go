@@ -41,7 +41,7 @@ func (s *Server) setupRouter() {
 	s.m = mux.NewRouter()
 	s.m.Handle("/definitions", NewEndpoint(s.getDefinitions)).Methods("GET")
 	s.m.Handle("/definitions", NewEndpoint(s.postDefinitions)).Methods("POST")
-	s.m.Handle("/definitions/{label}", NewEndpoint(s.buildDefinition)).Methods("POST")
+	s.m.Handle("/definitions/{label}", NewEndpoint(s.postBuildDefinition)).Methods("POST")
 }
 
 func (s *Server) setupOptions(opts ...interface{}) {

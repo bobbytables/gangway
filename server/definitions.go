@@ -68,19 +68,11 @@ func (s *Server) postDefinitions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) buildDefinition(w http.ResponseWriter, r *http.Request) {
-	ds, err := s.store.RetrieveDefinitions()
+func (s *Server) postBuildDefinition(w http.ResponseWriter, r *http.Request) {
+	d, err := s.store.RetrieveDefinition(mux.Vars(r)["label"])
 	if err != nil {
 		s.writeError(w, err, http.StatusInternalServerError)
 		return
-	}
-
-	var d data.Definition
-	for _, dd := range ds {
-		if dd.Label == mux.Vars(r)["label"] {
-			d = dd
-			break
-		}
 	}
 
 	bo := builder.BuildOpts{
@@ -95,4 +87,6 @@ func (s *Server) buildDefinition(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, res.Err, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusAccepted)
 }
