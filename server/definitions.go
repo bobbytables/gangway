@@ -6,9 +6,10 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/gorilla/mux"
+
 	"github.com/bobbytables/gangway/builder"
 	"github.com/bobbytables/gangway/data"
-	"github.com/gorilla/mux"
 )
 
 // getDefinitionsResp contains the structure of the response

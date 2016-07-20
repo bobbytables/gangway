@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/bobbytables/gangway/data"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 
 	"github.com/coreos/etcd/client"
@@ -53,6 +54,22 @@ func (s *Store) AddDefinition(d data.Definition) error {
 	_, err = kapp.Set(context.TODO(), key, string(js), nil)
 
 	return err
+}
+
+// RetrieveDefinition retrieves a definition by its label from etcd
+func (s *Store) RetrieveDefinition(label string) (data.Definition, error) {
+	kapp := s.newKeysAPIFactory(s.etcdClient)
+	resp, err := kapp.Get(context.TODO(), GangwayDefinitionsKey+"/"+label, nil)
+	if err != nil {
+		return data.Definition{}, errors.Wrap(err, "could not find definition")
+	}
+
+	def, err := definitionFromNode(resp.Node)
+	if err != nil {
+		return data.Definition{}, errors.Wrap(err, "could not parse definition from node")
+	}
+
+	return def, nil
 }
 
 func definitionFromNode(n *client.Node) (data.Definition, error) {

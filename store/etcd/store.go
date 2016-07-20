@@ -3,9 +3,9 @@ package etcdstore
 import (
 	"time"
 
-	"github.com/bobbytables/gangway/store"
-
 	"github.com/coreos/etcd/client"
+
+	"github.com/bobbytables/gangway/store"
 )
 
 var _ client.Client
